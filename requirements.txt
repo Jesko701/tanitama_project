@@ -1,0 +1,7 @@
+flask
+PyJWT
+jsonpickle
+datetime
+Flask-SQLAlchemy
+mysqlclient
+python-dotenv

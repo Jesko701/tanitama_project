@@ -3,8 +3,8 @@ from database.UserModel import UserModel, db
 from controller.AuthenticationController import JWT
 from controller.Authorization import add_token_to_header
 from dotenv import load_dotenv
-import jsonpickle
 import os
+import re
 
 load_dotenv()
 user_jwt = JWT(os.getenv('secret_key'))
@@ -12,17 +12,22 @@ user_jwt = JWT(os.getenv('secret_key'))
 
 class UserController():
     def createUser(self,username, email, password, confirmPass):
-            
+
             username = username
             email = email
             password = password
-            confirmPassword = confirmPass           
+            confirmPassword = confirmPass
+
+            pattern = re.compile("^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$")
+            pattern2 = re.compile("^[a-z0-9](\.?[a-z0-9]){5,}@y(ahoo)?ahoo\.com$")
+            # inp = email
+            if not pattern.match(email) and not pattern2.match(email) :
+                return jsonify({"message": "Email require using gmail or yahoo"}), 400
 
             if password != confirmPassword:
                 return jsonify({"message": "Passwords do not match"}), 400
             
             userData = UserModel(username,email,password)
-            newData = jsonpickle.encode(userData)
             db.session.add(userData)
             db.session.commit()
             Data = {
@@ -31,7 +36,7 @@ class UserController():
                 "password" : password,
                 "confirmPassword" : confirmPass
             }
-            return jsonify(message="Berhasil membuat data", data=newData), 201
+            return jsonify(message="Berhasil membuat data", data=Data), 201
 
 
     def getAll(self):
@@ -47,19 +52,22 @@ class UserController():
         return jsonify(message="Berhasil mengambil seluruh users",data=custom_data),200
 
     def loginUser(self, username, password):
-        user = UserModel.query.filter_by(username=username).first()
-        if user is None:
+        try:  # Test for SSL features
+            user = UserModel.query.filter_by(username=username).first()
+            if user is None:
+                return jsonify({"message": "Username tidak ditemukan"}), 404
+            if user.password != password:
+                return jsonify({"message": "Password salah"}), 400
+            
+            format_data = {
+                "id": user.id,
+                "username": user.username,
+            }
+            token = user_jwt.generateToken(format_data,1)
+            add_token_to_header(token)
+            return jsonify(message="Login berhasil", token=token), 200
+        except ImportError:
             return jsonify({"message": "Username tidak ditemukan"}), 404
-        if user.password != password:
-            return jsonify({"message": "Password salah"}), 400
-        
-        format_data = {
-            "id": user.id,
-            "username": user.username,
-        }
-        token = user_jwt.generateToken(format_data,1)
-        add_token_to_header(token)
-        return jsonify(message="Login berhasil", token=token), 200
 
     def updateUser(self, id, username=None, email=None):
         user = UserModel.query.filter_by(id=id).first()

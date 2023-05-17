@@ -19,6 +19,15 @@ user_controller = UserController()
 def get_all_users():
     return user_controller.getAll()
 
+@app.route('/profile', methods=['GET'])
+@required_token
+def getUser():
+    header = request.headers.get('Authorization')
+    token=None
+    if header.startswith('Bearer '):
+        token = header[7:]
+    return user_controller.payloadUser(token)
+
 @app.route('/users', methods=['POST'])
 def create_user():
     username= request.json['username']

@@ -12,7 +12,6 @@ user_jwt = JWT(os.getenv('secret_key'))
 
 class UserController():
     def createUser(self,username, email, password, confirmPass):
-
             username = username
             email = email
             password = password
@@ -38,7 +37,7 @@ class UserController():
             }
             return jsonify(message="Berhasil membuat data", data=Data), 201
 
-
+    #For the Admin
     def getAll(self):
         data = UserModel.query.all()
         custom_data = []
@@ -68,7 +67,15 @@ class UserController():
             return jsonify(message="Login berhasil", token=token), 200
         except ImportError:
             return jsonify({"message": "Username tidak ditemukan"}), 404
-
+    
+    def payloadUser(self, token):
+        try:
+            data = user_jwt.decode_token(token)
+            return jsonify(message="Berhasil mengambil data", data=data), 200
+        except ImportError:
+            return jsonify({"message": "Token salah"}), 400
+            
+    # For the Admin
     def updateUser(self, id, username=None, email=None):
         user = UserModel.query.filter_by(id=id).first()
         if user is None:
@@ -86,7 +93,7 @@ class UserController():
                 }
 
                 return jsonify(message="User berhasil diupdate", data=data_format), 200
-
+    #For the Admin
     def deleteUser(self, id):
         user = UserModel.query.filter_by(id=id).first()
         if user is None:

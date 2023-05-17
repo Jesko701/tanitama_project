@@ -1,5 +1,6 @@
 import jwt
 from datetime import datetime, timedelta
+from flask import jsonify
 
 class JWT:
     def __init__(self, secret_key, algorithm=['HS256']):
@@ -15,15 +16,18 @@ class JWT:
     
     def decode_token(self,token):
         try:
-            decoded = jwt.decode(token, self.secret_key, 'HS256')
-            return decoded
+            decodedData = jwt.decode(token, self.secret_key, 'HS256')
+            formatData = {
+                'username' : decodedData['username']
+            }
+            return formatData
         except jwt.ExpiredSignatureError:
         # Token has expired
-            return None
+            return jsonify(message="Token expired")
         
         except jwt.InvalidTokenError:
             # Invalid token
-            return None
+            return jsonify(message="Token tidak valid")
         
     def debug(self):
         return self.secret_key

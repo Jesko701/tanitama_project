@@ -14,35 +14,37 @@ app.config['SECRET_KEY'] = os.getenv("secret_key")
 init_app(app)
 user_controller = UserController()
 
+
 @app.route('/users', methods=['GET'])
 @required_token
 def get_all_users():
     return user_controller.getAll()
 
+
 @app.route('/profile', methods=['GET'])
 @required_token
 def getUser():
     header = request.headers.get('Authorization')
-    token=None
+    token = None
     if header.startswith('Bearer '):
         token = header[7:]
     return user_controller.payloadUser(token)
 
+
 @app.route('/users', methods=['POST'])
 def create_user():
-    username= request.json['username']
-    email=request.json['email']
-    password=request.json['password']
-    confirm_password=request.json['confirm_password']
-    return UserController.createUser(self=UserController,username=username,email=email,password=password,confirmPass=confirm_password)
+    username = request.json['username']
+    email = request.json['email']
+    password = request.json['password']
+    confirm_password = request.json['confirm_password']
+    return UserController.createUser(self=UserController, username=username, email=email, password=password, confirmPass=confirm_password)
+
 
 @app.route('/login', methods=['POST'])
 def login():
     username = request.json['username']
     pw = request.json['password']
-    return user_controller.loginUser(username=username,password=pw)
-
-    
+    return user_controller.loginUser(username=username, password=pw)
 
 
 if __name__ == "__main__":

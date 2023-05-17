@@ -1,5 +1,6 @@
-from flask import request,jsonify
+from flask import request, jsonify
 from functools import wraps
+
 
 def add_token_to_header(func):
     def wrapper(*args, **kwargs):
@@ -8,10 +9,11 @@ def add_token_to_header(func):
 
         # check jika response ada variable token dan terisi
         if 'Token' in response:
-            # Tambah 
+            # Tambah
             response.headers['Authorization'] = 'Bearer ' + response['Token']
         return response
     return wrapper
+
 
 def required_token(func):
     @wraps(func)

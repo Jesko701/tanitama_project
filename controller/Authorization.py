@@ -18,10 +18,13 @@ def add_token_to_header(func):
 def required_token(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        access_token = request.headers.get('Authorization')
-        if access_token:
-            return func(*args, **kwargs)
-        else:
-            # If access is not allowed, return a 401 Unauthorized error
-            return jsonify({'message': 'Tidak mempunyai akses'}), 401
+        try:
+            access_token = request.headers.get('Authorization')
+            if access_token:
+                return func(*args, **kwargs)
+            else:
+                # If access is not allowed, return a 401 Unauthorized error
+                return jsonify({'message': 'Tidak mempunyai akses'}), 401
+        except ImportError:
+            return jsonify(message="Token tidak valid")
     return wrapper

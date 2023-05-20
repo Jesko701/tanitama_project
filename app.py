@@ -1,8 +1,10 @@
+# * 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from database.UserModel import init_app
-from controller.UserController import UserController
-from controller.Authorization import required_token
+from controller.UserController import UserController # * with Class
+from controller.Authorization import required_token # * no Class
+import requests
 
 import os
 load_dotenv()
@@ -29,6 +31,19 @@ def getUser():
     if header.startswith('Bearer '):
         token = header[7:]
     return user_controller.payloadUser(token)
+
+
+@app.route('/weather', methods=['GET'])
+@required_token
+def weatherAPI():
+    try:
+        longitude = request.args.get('longitude')
+        latitude = request.args.get('latitude')
+        url = "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relativehumidity_2m,rain,windspeed_10m&timezone=Asia%2FBangkok".format(latitude,longitude)
+        weatherData=requests.get(url)
+        return weatherData.json()
+    except ImportError:
+        return jsonify(message='Gagal mengambil data cuaca')
 
 
 @app.route('/users', methods=['POST'])

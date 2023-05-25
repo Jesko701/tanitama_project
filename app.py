@@ -1,4 +1,4 @@
-# * 
+# * Diskusi mengenai prediksi menanam tanaman menggunakan Cuaca
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from database.UserModel import init_app
@@ -39,11 +39,11 @@ def weatherAPI():
     try:
         longitude = request.args.get('longitude')
         latitude = request.args.get('latitude')
-        url = "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m,relativehumidity_2m,rain,windspeed_10m&timezone=Asia%2FBangkok".format(latitude,longitude)
+        url = "https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&daily=weathercode,rain_sum,windspeed_10m_max&current_weather=true&timezone=Asia%2FBangkok".format(latitude,longitude)
         weatherData=requests.get(url)
         return weatherData.json()
     except ImportError:
-        return jsonify(message='Gagal mengambil data cuaca')
+        return jsonify(message='Gagal mengambil data cuaca'),200
 
 
 @app.route('/users', methods=['POST'])

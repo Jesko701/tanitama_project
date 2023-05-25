@@ -17,14 +17,14 @@ class UserController():
         password = password
         confirmPassword = confirmPass
 
-        pattern = re.compile("^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$")
-        pattern2 = re.compile("^[a-z0-9](\.?[a-z0-9]){5,}@y(ahoo)?ahoo\.com$")
+        pattern = re.compile(r"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$")
+        pattern2 = re.compile(r"^[a-z0-9](\.?[a-z0-9]){5,}@y(ahoo)?ahoo\.com$")
         # inp = email
         if not pattern.match(email) and not pattern2.match(email):
-            return jsonify({"message": "Email require using gmail or yahoo"}), 400
+            return jsonify({"message": "Email harus lebih dari 5 karakter, dan menggunakan yahoo atau gmail "}), 400
 
         if password != confirmPassword:
-            return jsonify({"message": "Passwords do not match"}), 400
+            return jsonify({"message": "Password tidak sama dengan sebelumnya"}), 400
 
         userData = UserModel(username, email, password)
         db.session.add(userData)

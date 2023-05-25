@@ -5,3 +5,4 @@ datetime
 Flask-SQLAlchemy
 mysqlclient
 python-dotenv
+flask tensorflow

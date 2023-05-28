@@ -16,6 +16,9 @@ app.config['SECRET_KEY'] = os.getenv("secret_key")
 init_app(app)
 user_controller = UserController()
 
+@app.route('/', methods=['GET'])
+def helloWL():
+    return jsonify(message="Hello World")
 
 @app.route('/users', methods=['GET'])
 @required_token

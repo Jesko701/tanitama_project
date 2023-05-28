@@ -1,8 +1,8 @@
 flask
 PyJWT
-jsonpickle
 datetime
 Flask-SQLAlchemy
-mysqlclient
 python-dotenv
-gunicorn
+mysqlclient
+wheel
+requests
